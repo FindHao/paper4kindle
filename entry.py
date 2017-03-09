@@ -1,13 +1,19 @@
 # coding=utf-8
-# coding:utf8
+"""This is a tool to crop paper pdf to the kindle size
+author: FindHao(find@findspace.name)"""
 from PyPDF2 import PdfFileWriter, PdfFileReader
-from copy import copy, deepcopy
+from copy import copy
+# todo: 暴力裁剪会切断行
 
 output = PdfFileWriter()
 input1 = PdfFileReader(open("/home/find/ddown/p97-chung.pdf", "rb"))
-# 设置左下角和右上角的坐标
-
+# 需要裁剪的白边
+margin = 40
+# 阅读顺序应该是
+# 1 3
+# 2 4
 for page in input1.pages:
+    # 由于PyPDF2的一些原因，无法做成循环形式，所以只能写成这么丑陋的。。
     upperleft_x = page.mediaBox.getUpperLeft_x()
     upperleft_y = page.mediaBox.getUpperLeft_y()
     upperright_x = page.mediaBox.getUpperRight_x()
@@ -17,46 +23,22 @@ for page in input1.pages:
     lowerright_x = page.mediaBox.getLowerRight_x()
     lowerright_y = page.mediaBox.getLowerRight_y()
     part1 = copy(page)
-    part1.cropBox.lowerLeft = (upperleft_x, upperleft_y / 2)
-    part1.cropBox.upperRight = (upperright_x / 2, upperright_y)
+    part1.cropBox.lowerLeft = (upperleft_x + margin, upperleft_y / 2)
+    part1.cropBox.upperRight = (upperright_x / 2, upperright_y - margin)
     output.addPage(part1)
     part2 = copy(page)
-    part2.cropBox.lowerLeft = (upperright_x / 2, upperright_y / 2)
-    part2.cropBox.upperRight = (upperright_x, upperright_y)
+    part2.cropBox.lowerLeft = (lowerleft_x + margin, lowerleft_y + margin)
+    part2.cropBox.upperRight = (upperright_x / 2, upperright_y / 2)
     output.addPage(part2)
     part3 = copy(page)
-    part3.cropBox.lowerLeft = (lowerleft_x, lowerleft_y)
-    part3.cropBox.upperRight = (upperright_x / 2, upperright_y / 2)
+    part3.cropBox.lowerLeft = (upperright_x / 2, upperright_y / 2)
+    part3.cropBox.upperRight = (upperright_x - margin, upperright_y - margin)
     output.addPage(part3)
     part4 = copy(page)
-    part4.cropBox.lowerLeft = (lowerright_x / 2, lowerright_y)
-    part4.cropBox.upperRight = (lowerright_x, upperright_y / 2)
+    part4.cropBox.lowerLeft = (lowerright_x / 2, lowerright_y + margin)
+    part4.cropBox.upperRight = (lowerright_x - margin, upperright_y / 2)
     output.addPage(part4)
-# print how many pages input1 has:
-# print "document1.pdf has %d pages." % input1.getNumPages()
-#
-# # add page 1 from input1 to output document, unchanged
-# output.addPage(input1.getPage(0))
-#
-# # add page 2 from input1, but rotated clockwise 90 degrees
-# output.addPage(input1.getPage(1).rotateClockwise(90))
-#
-# # add page 3 from input1, rotated the other way:
-# output.addPage(input1.getPage(2).rotateCounterClockwise(90))
-# # alt: output.addPage(input1.getPage(2).rotateClockwise(270))
-#
-# # add page 4 from input1, but first add a watermark from another PDF:
-# page4 = input1.getPage(3)
-# output.addPage(page4)
-#
-# # add page 5 from input1, but crop it to half size:
-# page5 = input1.getPage(4)
-# page5.mediaBox.upperRight = (
-#     page5.mediaBox.getUpperRight_x() / 2,
-#     page5.mediaBox.getUpperRight_y() / 2
-# )
-# output.addPage(page5)
 
-# finally, write "output" to document-output.pdf
+
 outputStream = file("/home/find/ddown/a.pdf", "wb")
 output.write(outputStream)
