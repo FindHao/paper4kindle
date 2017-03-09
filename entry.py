@@ -30,8 +30,7 @@ for page in input1.pages:
     output.addPage(part3)
     part4 = copy(page)
     part4.cropBox.lowerLeft = (lowerright_x / 2, lowerright_y)
-    # part4.cropBox.upperRight = (611.0, 395.0),
-    part4.cropBox.upperRight = (lowerright_x *0.999, upperright_y / 2 ),
+    part4.cropBox.upperRight = (lowerright_x, upperright_y / 2)
     output.addPage(part4)
 # print how many pages input1 has:
 # print "document1.pdf has %d pages." % input1.getNumPages()
