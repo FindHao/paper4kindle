@@ -43,5 +43,5 @@ for page in input1.pages:
     output.addPage(part4)
 
 
-outputStream = file(file_name[:-4]+"_croped.pdf", "wb")
+outputStream = open(file_name[:-4]+"_croped.pdf", "wb")
 output.write(outputStream)
