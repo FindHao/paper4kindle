@@ -4,9 +4,12 @@ author: FindHao(find@findspace.name)"""
 from PyPDF2 import PdfFileWriter, PdfFileReader
 from copy import copy
 # todo: 暴力裁剪会切断行
+import sys
+
+file_name = sys.argv[1]
 
 output = PdfFileWriter()
-input1 = PdfFileReader(open("/home/find/ddown/p97-chung.pdf", "rb"))
+input1 = PdfFileReader(open(file_name, "rb"))
 # 需要裁剪的白边
 margin = 40
 # 阅读顺序应该是
@@ -40,5 +43,5 @@ for page in input1.pages:
     output.addPage(part4)
 
 
-outputStream = file("/home/find/ddown/a.pdf", "wb")
+outputStream = file(file_name[:-4]+"_croped.pdf", "wb")
 output.write(outputStream)
